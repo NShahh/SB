@@ -1,10 +1,25 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session"; // ✅ Import express-session
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// ✅ Ensure SESSION_SECRET is always set
+const sessionSecret = process.env.SESSION_SECRET || "fallbackSecretKey";
+
+app.use(
+  session({
+    secret: sessionSecret, // ✅ Now it always has a value
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === "production" },
+  })
+);
+
+console.log("🔐 Session Secret Loaded:", sessionSecret); // ✅ Debugging Log
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -63,3 +78,4 @@ app.use((req, res, next) => {
     log(`serving on port ${PORT}`);
   });
 })();
+
