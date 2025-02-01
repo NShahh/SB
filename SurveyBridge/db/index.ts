@@ -13,13 +13,12 @@ if (!databaseUrl) {
   throw new Error("DATABASE_URL is not set.");
 }
 
-try {
-  console.log("📡 Connecting to Database:", databaseUrl); // ✅ Debugging Log
-  export const pool = new Pool({ connectionString: databaseUrl });
-  export const db = drizzle({ client: pool, schema });
+console.log("📡 Connecting to Database:", databaseUrl);
 
-  console.log("✅ Successfully Connected to Database");
-} catch (error) {
-  console.error("❌ Database Connection Failed:", error);
-  throw error;
-}
+const pool = new Pool({ connectionString: databaseUrl });
+const db = drizzle({ client: pool, schema });
+
+console.log("✅ Successfully Connected to Database");
+
+// ✅ Export outside try/catch
+export { pool, db };
